@@ -1,9 +1,10 @@
 from flask import Flask, request
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 from flask_jwt import JWT, jwt_required
 
 app = Flask(__name__)
-
+#this is to allow flask propagating exception even if debug is set to false on app
+app.config['PROPAGATE_EXCEPTIONS'] = True
 api=Api(app)
 
 movies=[]
@@ -11,31 +12,68 @@ movies=[]
 class Movies(Resource):
 
 	parser = reqparse.RequestParser()
-	parser.add_argument()
+	parser.add_argument('rating',
+		type=float,
+		required=True,
+		help="Not leaving this part blank"
+	)
+
+
 	#we are going to iterate through the moviess and retrive the specific 
 	#one that we want
 
 	def get(self, name):
-		for movie in movies:
-			if name == movie['name']:
-				return movie, 200
-		return "Student not found", 404
+		return {'item': next(filter(lambda x: x['name'] == name, movies), None)}
 
 
 	#this is for creating the movies 
 	def post(self, name):
-		if next(filter(lambda x: x['name'] == name, items), None) is not None:
+		if next(filter(lambda x: x['name'] == name, movies), None) is not None:
 			return {'message': "An item with name '{}' already exists.".format(name)}
+
+		data = Movies.parser.parse_args()
+
+		movie = {'name': name, 'rating': data['rating']}
+		movies.append(movie)
+		return movie
 		
 
 	def put(self, name):
-		pass
+		data = Movies.parser.parse_args()
+		movie = next(filter(lambda x: x['name'] == name, movies), None)
+		if movie is None:
+			movie = {'name': name, 'rating': data['rating']}
+			movies.append(movie)
+		else:
+			movie.update(data)
 
+	#deleting the movies
 	def delete(self, name):
-		pass
+		global movies
+		movies = list(filter(lambda x: x['name'] != name, movies))
+		return {'message': 'Item Deleted'}
 
 
-class StudentList(Resource):
+class MovieList(Resource):
 	def get(self):
-		pass
+		return {'movies': movies}
+
+
+api.add_resource(Movies, '/movie/<string:name>')
+api.add_resource(MovieList, '/movies')
+
+
+if __name__ == '__main__':
+	app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+
 
