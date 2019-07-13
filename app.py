@@ -6,14 +6,27 @@ app = Flask(__name__)
 
 api=Api(app)
 
-students=[]
+movies=[]
 
-class Student(Resource):
+class Movies(Resource):
+
+	parser = reqparse.RequestParser()
+	parser.add_argument()
+	#we are going to iterate through the moviess and retrive the specific 
+	#one that we want
+
 	def get(self, name):
-		pass
+		for movie in movies:
+			if name == movie['name']:
+				return movie, 200
+		return "Student not found", 404
 
+
+	#this is for creating the movies 
 	def post(self, name):
-		pass
+		if next(filter(lambda x: x['name'] == name, items), None) is not None:
+			return {'message': "An item with name '{}' already exists.".format(name)}
+		
 
 	def put(self, name):
 		pass
