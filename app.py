@@ -1,11 +1,14 @@
 from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
-from flask_jwt import JWT, jwt_required
+from flask_jwt import JWT, jwt_required, current_identity
 
+from security import authenticate, identity 
 app = Flask(__name__)
 #this is to allow flask propagating exception even if debug is set to false on app
 app.config['PROPAGATE_EXCEPTIONS'] = True
 api=Api(app)
+
+jwt = JWT(app, authenticate, identity)
 
 movies=[]
 
