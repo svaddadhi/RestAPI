@@ -21,7 +21,7 @@ class Movies(Resource):
 
 	#we are going to iterate through the moviess and retrive the specific 
 	#one that we want
-
+	@jwt_required()
 	def get(self, name):
 		return {'item': next(filter(lambda x: x['name'] == name, movies), None)}
 
@@ -37,7 +37,7 @@ class Movies(Resource):
 		movies.append(movie)
 		return movie
 		
-
+	@jwt_required()
 	def put(self, name):
 		data = Movies.parser.parse_args()
 		movie = next(filter(lambda x: x['name'] == name, movies), None)
@@ -48,6 +48,7 @@ class Movies(Resource):
 			movie.update(data)
 
 	#deleting the movies
+	@jwt_required()
 	def delete(self, name):
 		global movies
 		movies = list(filter(lambda x: x['name'] != name, movies))
