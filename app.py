@@ -2,7 +2,9 @@ from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 from flask_jwt import JWT, jwt_required, current_identity
 
-from security import authenticate, identity 
+from security import authenticate, identity
+from user import UserRegister
+
 app = Flask(__name__)
 #this is to allow flask propagating exception even if debug is set to false on app
 app.config['PROPAGATE_EXCEPTIONS'] = True
@@ -68,6 +70,7 @@ class MovieList(Resource):
 
 api.add_resource(Movies, '/movie/<string:name>')
 api.add_resource(MovieList, '/movies')
+api.add_resource(UserRegister, '/register')
 
 
 if __name__ == '__main__':
