@@ -19,7 +19,7 @@ class Movies(Resource):
 	parser.add_argument('rating',
 		type=float,
 		required=True,
-		help="Not leaving this part blank"
+		help="Cannot leave this part blank"
 	)
 
 
@@ -40,7 +40,9 @@ class Movies(Resource):
 		movie = {'name': name, 'rating': data['rating']}
 		movies.append(movie)
 		return movie
-		
+
+
+	#any modifications the user may want to make 
 	@jwt_required()
 	def put(self, name):
 		data = Movies.parser.parse_args()
